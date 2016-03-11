@@ -19,20 +19,18 @@ namespace helloworldmulticontextdifferentroots
 			// A parent context, handles relationship of child / parent communication
 			// It becomes parent when it's child contexts boot up and find that this context's view is parent of them
 			parentContext = new Context ();
-
-			foreach (ContextHolder child in _childContextHolders)
-				parentContext.AddChild(child.Context);
 			
 			parentContext.Install<UnityMultiContextBundle> () // Install MVCS Framework
 				.Configure(new TransformContextView(transform));
 
-			parentContext.AfterInitializing (InitializeChildContexts);
+			parentContext.AfterInitializing (InitializeChildContexts); // After this has initialized, let's add child contexts manually
 		}
 
 		private void InitializeChildContexts()
 		{
 			foreach (ContextHolder child in _childContextHolders) 
 			{
+				parentContext.AddChild (child.Context);
 				child.Initialize ();
 			}
 		}
